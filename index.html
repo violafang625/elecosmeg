@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中華國中地下實驗室：磁場駭客</title>
+    <style>
+        body {
+            font-family: "Microsoft JhengHei", sans-serif;
+            background-color: #1a1a2e;
+            color: #e94560;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #game-container {
+            background-color: #16213e;
+            width: 95%;
+            max-width: 650px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px #e94560;
+            text-align: center;
+            color: #fff;
+        }
+        h1, h2 { color: #0f3460; text-shadow: -1px -1px 0 #e94560, 1px -1px 0 #e94560, -1px 1px 0 #e94560, 1px 1px 0 #e94560; margin-top: 0; letter-spacing: 2px;}
+        .level { display: none; }
+        .active { display: block; }
+        .btn {
+            background-color: #0f3460;
+            color: white;
+            border: 2px solid #e94560;
+            padding: 12px 24px;
+            margin: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn:hover { background-color: #e94560; color: #16213e; }
+        
+        .visual-box {
+            background-color: #0f3460;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 20px;
+            margin: 20px 0;
+            border: 2px dashed #e94560;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+        
+        .feedback { margin-top: 15px; font-weight: bold; font-size: 18px; min-height: 40px; color: #4ecca3;}
+        .wrong { color: #e74c3c; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="start-screen" class="level active">
+        <h1>🧲 磁場駭客：安培的試煉 🧲</h1>
+        <p>警告：地下實驗室主電力系統已被鎖定。<br>你必須利用「安培右手定則」破解三道電磁密碼鎖，才能恢復供電！</p>
+        <p>準備好你的右手了嗎？</p>
+        <button class="btn" onclick="startGame()">開始破解</button>
+    </div>
+
+    <div id="level-1" class="level">
+        <h2>第一道鎖：俯視直導線 👁️</h2>
+        <p>你從正上方往下看一條垂直的導線。儀表顯示，電流正「垂直射出螢幕」朝你的眼睛衝過來！</p>
+        
+        <div class="visual-box">
+             [ 導線截面圖 ]
+                  
+                 ⊙ 
+          (電流朝你射出)
+        </div>
+
+        <p>請問，這條導線周圍產生的磁場方向為何？</p>
+        
+        <button class="btn" onclick="checkAnswer1('cw')">🔄 順時針方向</button>
+        <button class="btn" onclick="checkAnswer1('ccw')">逆時針方向 🔄</button>
+        
+        <div class="feedback" id="feedback-1"></div>
+        <button class="btn" id="next-btn-1" style="display:none;" onclick="nextLevel(2)">進入第二道鎖 ➡️</button>
+    </div>
+
+    <div id="level-2" class="level">
+        <h2>第二道鎖：羅盤的偏轉 🧭</h2>
+        <p>桌上有一個羅盤，指針原本指向北方。現在，有一條導線「跨過羅盤的上方」，並且通入「由南向北」的電流。</p>
+        
+        <div class="visual-box">
+             北 (N)
+               ↑
+          導線：| (電流往上/北)
+          羅盤：[放在導線正下方]
+               |
+             南 (S)
+        </div>
+
+        <p>伸出你的右手比劃一下！請問羅盤的 N 極會向哪裡偏轉？</p>
+        
+        <button class="btn" onclick="checkAnswer2('E')">👉 向東 (右) 偏轉</button>
+        <button class="btn" onclick="checkAnswer2('W')">👈 向西 (左) 偏轉</button>
+        <button class="btn" onclick="checkAnswer2('none')">不動</button>
+        
+        <div class="feedback" id="feedback-2"></div>
+        <button class="btn" id="next-btn-2" style="display:none;" onclick="nextLevel(3)">進入最終防線 ➡️</button>
+    </div>
+
+    <div id="level-3" class="level">
+        <h2>最終防線：極性顛倒的螺線管 🔋</h2>
+        <p>這是一個用鐵釘纏繞而成的電磁鐵。注意看漆包線的繞法！電流從左端流入，且第一圈是「從鐵釘前方往下繞到後方」。</p>
+        
+        <div class="visual-box">
+          (電流流入) ➔ 導線從「前方」往下繞
+             |
+             V
+          [左端] 鐵釘鐵芯 [右端]
+        </div>
+
+        <p>請用四指順著電流方向握住鐵釘。請問電磁鐵的哪一端會變成 N 極？</p>
+        
+        <button class="btn" onclick="checkAnswer3('L')">左端是 N 極</button>
+        <button class="btn" onclick="checkAnswer3('R')">右端是 N 極</button>
+        
+        <div class="feedback" id="feedback-3"></div>
+        <button class="btn" id="next-btn-3" style="display:none;" onclick="showEndScreen()">解鎖主系統 🏆</button>
+    </div>
+
+    <div id="end-screen" class="level">
+        <h1>🎉 系統破解成功！ 🎉</h1>
+        <p>強大的電磁脈衝已啟動，地下實驗室恢復光明！</p>
+        <p>你的右手具備了完美的三維空間運算能力，<br>不愧是國三自然科的頂尖駭客！</p>
+        <div style="font-size: 50px; margin: 20px 0;">⚡🖐️⚡</div>
+        <button class="btn" onclick="location.reload()">重新挑戰</button>
+    </div>
+</div>
+
+<script>
+    function startGame() {
+        document.getElementById('start-screen').classList.remove('active');
+        document.getElementById('level-1').classList.add('active');
+    }
+
+    function nextLevel(levelNum) {
+        document.querySelectorAll('.level').forEach(el => el.classList.remove('active'));
+        document.getElementById('level-' + levelNum).classList.add('active');
+    }
+
+    function showEndScreen() {
+        document.querySelectorAll('.level').forEach(el => el.classList.remove('active'));
+        document.getElementById('end-screen').classList.add('active');
+    }
+
+    function checkAnswer1(ans) {
+        let feedback = document.getElementById('feedback-1');
+        if (ans === 'ccw') {
+            feedback.innerHTML = "✅ 破解正確！大拇指朝向自己的臉，四指自然彎曲的方向就是逆時針！";
+            feedback.className = "feedback";
+            document.getElementById('next-btn-1').style.display = "inline-block";
+        } else {
+            feedback.innerHTML = "❌ 警告：磁場方向錯誤！請把大拇指指向自己的臉再試一次！";
+            feedback.className = "feedback wrong";
+            document.getElementById('next-btn-1').style.display = "none";
+        }
+    }
+
+    
+    function checkAnswer2(ans) {
+        let feedback = document.getElementById('feedback-2');
+        if (ans === 'W') { // 答案修正為向西 (左)
+            feedback.innerHTML = "✅ 破解正確！大拇指朝北，導線在上方，所以羅盤所在位置(導線下方)的磁場方向是繞向西邊（左）！";
+            feedback.className = "feedback";
+            document.getElementById('next-btn-2').style.display = "inline-block";
+        } else {
+            feedback.innerHTML = "❌ 警告：偏轉方向錯誤！請伸出右手，大拇指朝北，你的四指在導線「下方」會指向哪裡？";
+            feedback.className = "feedback wrong";
+            document.getElementById('next-btn-2').style.display = "none";
+        }
+  
+    }
+
+    function checkAnswer3(ans) {
+        let feedback = document.getElementById('feedback-3');
+        if (ans === 'R') {
+            feedback.innerHTML = "✅ 完全正確！四指從前方往下繞，大拇指自然會指向右邊。右端就是 N 極！";
+            feedback.className = "feedback";
+            document.getElementById('next-btn-3').style.display = "inline-block";
+        } else {
+            feedback.innerHTML = "❌ 警告：極性錯誤！請確認你的四指是「從前方往下繞」！";
+            feedback.className = "feedback wrong";
+            document.getElementById('next-btn-3').style.display = "none";
+        }
+    }
+</script>
+
+</body>
+</html>
